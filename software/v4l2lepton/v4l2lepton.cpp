@@ -92,21 +92,31 @@ static void grab_frame() {
     }
 
     float diff = maxValue - minValue;
+    //std::cout<<"max: "<<maxValue<<" min: "<<minValue<<std::endl;
     float scale = 255 / diff;
+
     for (int i = 0; i < FRAME_SIZE_UINT16; i++) {
         if (i % PACKET_SIZE_UINT16 < 2) {
             continue;
         }
-        value = (frameBuffer[i] - minValue) * scale;
+        //value = (frameBuffer[i] - minValue) * scale;
+    //value = (frameBuffer[i]-7269) * 255/(9400- 7269);//0-100
+    value = (frameBuffer[i]-7482) * 255/(8335- 7482);//10-50
+    if(value>255) value = 255;
+    if(value<0) value = 0;
+
         const int *colormap = colormap_ironblack;
         column = (i % PACKET_SIZE_UINT16) - 2;
         row = i / PACKET_SIZE_UINT16;
 
         // Set video buffer pixel to scaled colormap value
         int idx = row * width * 3 + column * 3;
-        vidsendbuf[idx + 0] = colormap[3 * value];
-        vidsendbuf[idx + 1] = colormap[3 * value + 1];
-        vidsendbuf[idx + 2] = colormap[3 * value + 2];
+        vidsendbuf[idx + 0] = value;
+    vidsendbuf[idx + 1] = 0;
+        vidsendbuf[idx + 2] = 0;
+    //vidsendbuf[idx + 0] = colormap[3 * value + 0];
+        //vidsendbuf[idx + 1] = colormap[3 * value + 1];
+        //vidsendbuf[idx + 2] = colormap[3 * value + 2];
     }
 
     /*
